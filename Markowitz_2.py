@@ -74,7 +74,9 @@ class MyPortfolio:
         """
         TODO: Complete Task 4 Below
         """
-
+        self.portfolio_weights = pd.DataFrame(index=self.price.index, columns=self.price.columns)
+        self.portfolio_weights.loc[:, "XLK"] = 1
+        # all in tech sector, this is good
         """
         TODO: Complete Task 4 Above
         """

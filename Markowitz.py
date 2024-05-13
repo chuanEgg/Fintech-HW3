@@ -117,15 +117,17 @@ class RiskParityPortfolio:
         """
         TODO: Complete Task 2 Below
         """
-        vol = 1 / df_returns[assets].rolling(window=self.lookback).std()        
-        sum_vol = vol.sum(axis=1)
-        self.portfolio_weights.loc[:, assets] = vol.div(sum_vol, axis=0)
+        for i in range(self.lookback+1, len(df)):
+            vol = 1 / df_returns[assets].iloc[i-self.lookback:i].std()
+            vol_sum = vol.sum()
+            # print(vol)
+            self.portfolio_weights.loc[self.portfolio_weights.index[i], assets] = vol.div(vol_sum)
         """
         TODO: Complete Task 2 Above
         """
-
         self.portfolio_weights.ffill(inplace=True)
         self.portfolio_weights.fillna(0, inplace=True)
+        # print(self.portfolio_weights)
 
     def calculate_portfolio_returns(self):
         # Ensure weights are calculated
@@ -194,8 +196,11 @@ class MeanVariancePortfolio:
 
                 # Sample Code: Initialize Decision w and the Objective
                 # NOTE: You can modify the following code
-                w = model.addMVar(n, name="w", ub=1)
-                model.setObjective(w.sum(), gp.GRB.MAXIMIZE)
+                w = model.addMVar(n, name="w", ub=1, lb=0)
+                model.addConstr(w.sum() == 1, name="sum_constraint")
+                # print(mu)
+                # print(Sigma)
+                model.setObjective((w.T @ mu - (self.gamma / 2) * (w.T @ Sigma @ w)), gp.GRB.MAXIMIZE)
 
                 """
                 TODO: Complete Task 3 Below
@@ -366,6 +371,8 @@ class AssignmentJudge:
             return False
 
         # Compare values with allowed relative difference
+        print("expected\n",df1)
+        print("actual\n",df2)
         for column in df1.columns:
             if (
                 df1[column].dtype.kind in "bifc" and df2[column].dtype.kind in "bifc"
