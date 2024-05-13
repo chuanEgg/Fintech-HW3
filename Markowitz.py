@@ -66,7 +66,7 @@ class EqualWeightPortfolio:
         """
         TODO: Complete Task 1 Below
         """
-
+        self.portfolio_weights.loc[:, assets] = 1 / len(assets)
         """
         TODO: Complete Task 1 Above
         """
@@ -117,7 +117,9 @@ class RiskParityPortfolio:
         """
         TODO: Complete Task 2 Below
         """
-
+        vol = 1 / df_returns[assets].rolling(window=self.lookback).std()        
+        sum_vol = vol.sum(axis=1)
+        self.portfolio_weights.loc[:, assets] = vol.div(sum_vol, axis=0)
         """
         TODO: Complete Task 2 Above
         """
@@ -369,9 +371,11 @@ class AssignmentJudge:
                 df1[column].dtype.kind in "bifc" and df2[column].dtype.kind in "bifc"
             ):  # Check only numeric types
                 if not np.isclose(df1[column], df2[column], atol=tolerance).all():
+                    print(f"Column '{column}' is not within tolerance.")
                     return False
             else:
                 if not (df1[column] == df2[column]).all():
+                    print(f"Column '{column}' is not equal.")
                     return False
 
         return True
