@@ -371,18 +371,18 @@ class AssignmentJudge:
             return False
 
         # Compare values with allowed relative difference
-        print("expected\n",df1)
-        print("actual\n",df2)
+        # print("expected\n",df1)
+        # print("actual\n",df2)
         for column in df1.columns:
             if (
                 df1[column].dtype.kind in "bifc" and df2[column].dtype.kind in "bifc"
             ):  # Check only numeric types
                 if not np.isclose(df1[column], df2[column], atol=tolerance).all():
-                    print(f"Column '{column}' is not within tolerance.")
+                    # print(f"Column '{column}' is not within tolerance.")
                     return False
             else:
                 if not (df1[column] == df2[column]).all():
-                    print(f"Column '{column}' is not equal.")
+                    # print(f"Column '{column}' is not equal.")
                     return False
 
         return True
